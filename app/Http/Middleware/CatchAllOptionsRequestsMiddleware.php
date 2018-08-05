@@ -1,10 +1,8 @@
 <?php
-
 namespace App\Http\Middleware;
-
 use Closure;
 
-class ExampleMiddleware
+class CatchAllOptionsRequestsMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,6 +13,12 @@ class ExampleMiddleware
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+      if ($request->isMethod('OPTIONS')) {
+        app('router')->options($request->path(), function() {
+          return response('Welcome', 200);
+        });
+      }
+
+      return $next($request);
     }
 }
