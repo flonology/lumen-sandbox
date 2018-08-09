@@ -15,7 +15,11 @@ class CatchAllOptionsRequestsMiddleware
     {
       if ($request->isMethod('OPTIONS')) {
         app('router')->options($request->path(), function() {
-          return response('Welcome', 200);
+          return response(
+              'Welcome',
+              200,
+              CorsMiddleware::HEADERS
+          );
         });
       }
 
