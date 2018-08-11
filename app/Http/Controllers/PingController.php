@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Services\ExampleService;
 
+
 class PingController extends Controller
 {
     private $exampleService;
