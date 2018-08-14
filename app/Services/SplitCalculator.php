@@ -14,7 +14,11 @@ class SplitCalculator
 
     public function getNumberOfPieces()
     {
-        return $this->end - $this->start;
+        if ($this->end < $this->start) {
+            return 0;
+        }
+
+        return ($this->end - $this->start) + 1;
     }
 
     public function getLeftHalfStart(): int
