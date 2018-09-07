@@ -13,16 +13,16 @@ class CatchAllOptionsRequestsMiddleware
      */
     public function handle($request, Closure $next)
     {
-      if ($request->isMethod('OPTIONS')) {
-        app('router')->options($request->path(), function() {
-          return response(
-              'Welcome',
-              200,
-              CorsMiddleware::HEADERS
-          );
-        });
-      }
+        if ($request->isMethod('OPTIONS')) {
+            app('router')->options($request->path(), function() {
+                return response(
+                    'Welcome',
+                    200,
+                    CorsMiddleware::HEADERS
+                );
+            });
+        }
 
-      return $next($request);
+        return $next($request);
     }
 }
