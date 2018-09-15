@@ -17,4 +17,14 @@ class LoginTest extends TestCase
 
         $this->seeStatusCode(200);
     }
+
+
+    public function testCannotGetCredsWithoutValidApiKey()
+    {
+        $this->json('GET', 'user/creds', [], [
+            'Authorization' => 'Bearer ' . 'Some Invalid Key'
+        ]);
+
+        $this->seeStatusCode(401);
+    }
 }
