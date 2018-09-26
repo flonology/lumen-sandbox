@@ -3,18 +3,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 
-class User extends Model
+class Cred extends Model
 {
     protected $fillable = [
-        'name'
+        'cred_item'
     ];
 
     protected $hidden = [
-        'password',
     ];
 
-    public function creds()
+
+    public function user()
     {
-        return $this->hasMany('App\Models\Cred');
+        return $this->belongsTo('App\Models\User');
     }
 }
