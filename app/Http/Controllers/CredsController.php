@@ -32,8 +32,29 @@ class CredsController extends Controller
         $cred->save();
 
         return response()->json([
-            'data' => 'Created'
+            'data' => ['id' => $cred->id]
         ], 201);
+    }
+
+
+    public function updateCred(Request $request, $id)
+    {
+        $user = $this->getUser();
+
+        $this->validate($request, [
+            'cred_item' => 'required|json'
+        ]);
+
+        $cred = Cred::findOrFail($id);
+        $cred->fill([
+            'cred_item' => $request->input('cred_item')
+        ]);
+
+        $cred->save();
+
+        return response()->json([
+            'data' => ['id' => $cred->id]
+        ], 200);
     }
 
 

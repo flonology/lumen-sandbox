@@ -9,14 +9,7 @@ class CreateCredTest extends TestCase
 
     public function testCanCreateCredItem()
     {
-        $this->json('POST', '/login', [
-            'username' => 'John Doe',
-            'password' => 'Johns Secret Password'
-        ]);
-
-        $this->seeStatusCode(201);
-        $api_key = json_decode($this->response->content());
-
+        $api_key = $this->login();
 
         $this->json('POST', '/user/creds', [
             'cred_item' => $this->getCredItem()
@@ -25,6 +18,24 @@ class CreateCredTest extends TestCase
         ]);
 
         $this->seeStatusCode(201);
+        $created_id = json_decode($this->response->content())->data->id;
+
+        $this->seeInDatabase('creds', [
+            'id' => $created_id,
+            'cred_item' => $this->getCredItem()
+        ]);
+    }
+
+
+    private function login(): string
+    {
+        $this->json('POST', '/login', [
+            'username' => 'John Doe',
+            'password' => 'Johns Secret Password'
+        ]);
+
+        $this->seeStatusCode(201);
+        return json_decode($this->response->content());
     }
 
 

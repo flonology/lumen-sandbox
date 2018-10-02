@@ -9,4 +9,5 @@ $router->post('/login', 'LoginController@login');
 $router->group(['prefix' => 'user', 'middleware' => 'auth'], function() use ($router) {
     $router->get('creds', 'CredsController@listCreds');
     $router->post('creds', 'CredsController@createCred');
+    $router->put('creds/{id:\d+}', 'CredsController@updateCred');
 });
