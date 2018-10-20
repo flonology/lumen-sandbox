@@ -11,4 +11,5 @@ $router->group(['prefix' => 'user', 'middleware' => 'auth'], function() use ($ro
     $router->get('creds', 'CredsController@listCreds');
     $router->post('creds', 'CredsController@createCred');
     $router->put('creds/{id:\d+}', 'CredsController@updateCred');
+    $router->post('token', 'TokenController@createToken');
 });
