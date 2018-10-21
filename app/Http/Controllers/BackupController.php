@@ -16,4 +16,12 @@ class BackupController extends Controller
            'Content-Disposition' => "attachment; filename=\"{$file_name}\""
        ]);
     }
+
+
+    public function restoreBackup(Request $request)
+    {
+        return response()->json([
+            'data' => ['entries_restored' => 3000]
+        ], 201);
+    }
 }
