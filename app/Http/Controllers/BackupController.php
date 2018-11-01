@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Date;
 use App\Models\Cred;
+use App\Models\User;
 
 class BackupController extends Controller
 {
@@ -25,12 +26,15 @@ class BackupController extends Controller
             'backup_file' => 'required|file'
         ]);
 
-        // Validate if valid json
-        // See http://php.net/manual/en/function.json-last-error.php
-
         $backup = json_decode(
             file_get_contents($request->file('backup_file')->getPathname())
         );
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return response()->json([
+                'data' => 'Could not decode backup file (valid JSON expected)'
+            ], 422);
+        }
 
         $user = app('auth')->user();
 
@@ -45,18 +49,13 @@ class BackupController extends Controller
 
             $cred = $user->creds()->find($entry->id);
             if ($cred) {
-                if ($cred->cred_item != $entry->cred_item) {
-                    $cred->cred_item = $entry->cred_item;
-                    $cred->save();
+                if ($this->updateIfContentsDiffer($cred, $entry)) {
                     $updated++;
                 } else {
                     $untouched++;
                 }
             } else {
-                $cred = new Cred();
-                $cred->cred_item = $entry->cred_item;
-                $cred->user()->associate($user);
-                $cred->save();
+                $this->recreateCred($user, $entry);
                 $restored++;
             }
         }
@@ -68,5 +67,27 @@ class BackupController extends Controller
                 'untouched' => $untouched
             ]
         ], 201);
+    }
+
+
+    private function recreateCred(User $user, \stdClass $entry)
+    {
+        $cred = new Cred();
+        $cred->cred_item = $entry->cred_item;
+        $cred->user()->associate($user);
+        $cred->save();
+    }
+
+
+    private function updateIfContentsDiffer(Cred $cred, \stdClass $entry)
+    {
+        if ($cred->cred_item == $entry->cred_item) {
+            return false;
+        }
+
+        $cred->cred_item = $entry->cred_item;
+        $cred->save();
+
+        return true;
     }
 }
