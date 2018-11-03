@@ -58,6 +58,19 @@ class CredsController extends Controller
     }
 
 
+    public function deleteCred(Request $request, $id)
+    {
+        $user = $this->getUser();
+
+        $cred = Cred::findOrFail($id);
+        $cred->delete();
+
+        return response()->json([
+            'data' => ['id' => $cred->id]
+        ], 200);
+    }
+
+
     private function getUser(): User
     {
         return app('auth')->user();
