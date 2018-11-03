@@ -3,13 +3,7 @@ class LoginTest extends TestCase
 {
     public function testCanLoginAndCallUserAreaWithApiKey()
     {
-        $this->json('POST', '/login', [
-            'username' => 'John Doe',
-            'password' => 'Johns Secret Password'
-        ]);
-
-        $this->seeStatusCode(201);
-        $api_key = json_decode($this->response->content());
+        $api_key = $this->loginAsJohnDoe();
 
         $this->json('GET', 'user/creds', [], [
             'Authorization' => 'Bearer ' . $api_key

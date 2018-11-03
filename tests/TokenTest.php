@@ -10,7 +10,7 @@ class TokenTest extends TestCase
 
     public function testCanGenerateToken()
     {
-        $api_key = $this->login();
+        $api_key = $this->loginAsJohnDoe();
 
         $this->post('user/token', [], [
             'Authorization' => 'Bearer ' . $api_key
@@ -41,19 +41,5 @@ class TokenTest extends TestCase
     {
         $this->get('/user/backup/someToken');
         $this->seeStatusCode(401);
-    }
-
-
-    private function login()
-    {
-        $this->json('POST', '/login', [
-            'username' => 'John Doe',
-            'password' => 'Johns Secret Password'
-        ]);
-
-        $this->seeStatusCode(201);
-
-        $api_key = json_decode($this->response->content());
-        return $api_key;
     }
 }

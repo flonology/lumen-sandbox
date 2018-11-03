@@ -45,7 +45,7 @@ class CredsController extends Controller
             'cred_item' => 'required|json'
         ]);
 
-        $cred = Cred::findOrFail($id);
+        $cred = $user->creds()->findOrFail($id);
         $cred->fill([
             'cred_item' => $request->input('cred_item')
         ]);
@@ -62,7 +62,7 @@ class CredsController extends Controller
     {
         $user = $this->getUser();
 
-        $cred = Cred::findOrFail($id);
+        $cred = $user->creds()->findOrFail($id);
         $cred->delete();
 
         return response()->json([

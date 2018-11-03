@@ -9,14 +9,7 @@ class UpdateCredTest extends TestCase
 
     public function testCanUpdateCredItem()
     {
-        $this->json('POST', '/login', [
-            'username' => 'John Doe',
-            'password' => 'Johns Secret Password'
-        ]);
-
-        $this->seeStatusCode(201);
-        $api_key = json_decode($this->response->content());
-
+        $api_key = $this->loginAsJohnDoe();
 
         $this->json('PUT', '/user/creds/1', [
             'cred_item' => $this->getCredItem()
@@ -26,6 +19,24 @@ class UpdateCredTest extends TestCase
 
         $this->seeStatusCode(200);
         $this->seeInDatabase('creds', [
+            'user_id' => 1,
+            'cred_item' => $this->getCredItem()
+        ]);
+    }
+
+
+    public function testCannotUpdateItemOfAnotherUser()
+    {
+        $api_key = $this->loginAsJaneDoe();
+
+        $this->json('PUT', '/user/creds/1', [
+            'cred_item' => $this->getCredItem()
+        ], [
+            'Authorization' => 'Bearer ' . $api_key
+        ]);
+
+        $this->seeStatusCode(404);
+        $this->notSeeInDatabase('creds', [
             'user_id' => 1,
             'cred_item' => $this->getCredItem()
         ]);
