@@ -15,4 +15,5 @@ $router->group(['prefix' => 'user', 'middleware' => 'auth'], function() use ($ro
     $router->post('token', 'TokenController@createToken');
     $router->get('backup/{token}', 'BackupController@downloadBackup');
     $router->post('backup/restore', 'BackupController@restoreBackup');
+    $router->delete('account', 'UserController@deleteAccount');
 });

@@ -17,4 +17,9 @@ class User extends Model
     {
         return $this->hasMany('App\Models\Cred');
     }
+
+    public function tokens()
+    {
+        return $this->hasMany('App\Models\Token');
+    }
 }
