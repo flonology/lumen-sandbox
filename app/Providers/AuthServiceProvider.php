@@ -43,7 +43,7 @@ class AuthServiceProvider extends ServiceProvider
         }
 
         $user = $token->user()->first();
-        Token::where('token', $token_string)->delete();
+        $user->tokens()->delete();
 
         return $user;
     }

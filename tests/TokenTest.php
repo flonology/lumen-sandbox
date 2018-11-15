@@ -26,10 +26,7 @@ class TokenTest extends TestCase
     public function testCanUseTokenOnlyOneTime()
     {
         $user = User::where('name', 'John Doe')->first();
-
-        $token = new Token(['token' => 'Some One Time Token']);
-        $token->user()->associate($user);
-        $token->save();
+        $token = $this->createUserToken($user, 'Some One Time Token');
 
         $this->get("/user/backup/{$token->token}");
         $this->seeStatusCode(200);
@@ -37,9 +34,34 @@ class TokenTest extends TestCase
     }
 
 
+    public function testRemovesAllTokensOfTheUserWhenSuccessful()
+    {
+        $user = User::where('name', 'John Doe')->first();
+
+        $someToken = $this->createUserToken($user, 'Some One Time Token');
+        $otherToken = $this->createUserToken($user, 'Some Other Token');
+
+        $this->get("/user/backup/{$someToken->token}");
+        $this->seeStatusCode(200);
+
+        $this->notSeeInDatabase('tokens', ['token' => $someToken->token]);
+        $this->notSeeInDatabase('tokens', ['token' => $otherToken->token]);
+    }
+
+
     public function testGetUnauthorizedWithoutToken()
     {
         $this->get('/user/backup/someToken');
         $this->seeStatusCode(401);
+    }
+
+
+    private function createUserToken(User $user, string $token): Token
+    {
+        $token = new Token(['token' => $token]);
+        $token->user()->associate($user);
+        $token->save();
+
+        return $token;
     }
 }
